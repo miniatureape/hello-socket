@@ -1,0 +1,42 @@
+<html>
+<ul id="chat"></ul>
+    
+<input type="text" id="msg"></input>
+<input type="submit" id="submit"></input>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+  var socket = io.connect('http://localhost');
+    
+  var nickname = prompt('Name?');
+
+  if (!nickname) {
+    alert("Well we're just going to call you jerkface.");
+    nickname = "jerkface" + (new Date).getTime();
+  } 
+
+  socket.emit('set nickname', nickname);
+
+  var msg = document.getElementById('msg');
+  var submitBtn = document.getElementById('submit');
+  var chat = document.getElementById('chat');
+
+  submitBtn.addEventListener('click', sendMessage);
+
+  function sendMessage() {
+    var text = msg.value;
+    msg.value = '';
+    socket.emit('send message', text);
+  }
+
+  socket.on('new message', function(msg) {
+
+      var newLine = document.createElement('li');
+      newLine.appendChild(document.createTextNode(msg.name + ": " + msg.contents));
+      chat.appendChild(newLine);
+
+  })
+
+</script>
+</html>
