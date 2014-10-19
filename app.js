@@ -7,7 +7,7 @@ app.listen(8080);
 // You can basically ignore this part. It just serves
 // the index.html page to the browser
 
-function handler (req, res) {
+function handler(req, res) {
   fs.readFile(__dirname + '/index.html',
   function (err, data) {
     if (err) {
@@ -22,26 +22,31 @@ function handler (req, res) {
 
 // This is where the fun happens
 
+var users = {};
+
 io.sockets.on('connection', function (socket) {
 
   socket.on('set nickname', function (name) {
 
-      socket.set('nickname', name, function () {
-          socket.emit('ready');
-      });
+      users[socket.id] = name;
+
+      socket.emit('ready');
 
   });
 
   socket.on('send message', function (msg) {
 
-      socket.get('nickname', function (err, name) {
+      var name = users[socket.id];
 
-          socket.broadcast.emit('new message', {
-              contents: msg, 
-              name: name
-          });
+      if (!name) {
+          name = 'Unknown Name';
+      }
 
+      socket.broadcast.emit('new message', {
+          contents: msg, 
+          name: name
       });
+
 
   });
 
