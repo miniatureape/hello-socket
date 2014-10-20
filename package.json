@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/miniatureape/hello-socket",
   "dependencies": {
-    "socket.io": "^1.1.0"
+    "socket.io": "1.1.0"
   }
 }
